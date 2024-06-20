@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { googleDocsToMarkdown } from "docs-markdown";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -22,7 +23,8 @@ export default async function Editor({
   );
   const json = await result.json();
   console.log(json);
-
+  const markdown = googleDocsToMarkdown(json);
+  console.log(markdown);
   return <main></main>;
 }
 
