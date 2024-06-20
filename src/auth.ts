@@ -5,17 +5,21 @@ import Google from "next-auth/providers/google";
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Google],
   callbacks: {
-    jwt({ token, trigger, session }) {
-      if (trigger === "update") token.name = session.user.name;
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token;
+      }
       return token;
     },
     async session({ session, token }) {
-      if (token?.accessToken) {
-        session.accessToken = token.accessToken;
-      }
+      session.accessToken = token.accessToken;
       return session;
     },
   },
+  experimental: {
+    enableWebAuthn: true,
+  },
+  debug: process.env.NODE_ENV !== "production" ? true : false,
 });
 declare module "next-auth" {
   interface Session {
