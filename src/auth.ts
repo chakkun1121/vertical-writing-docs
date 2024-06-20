@@ -1,9 +1,29 @@
 import NextAuth from "next-auth";
 import "next-auth/jwt";
-import Google from "next-auth/providers/google";
+import GoogleProvider from "next-auth/providers/google";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [Google],
+  providers: [
+    GoogleProvider({
+      authorization: {
+        params: {
+          scope: [
+            "openid",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            // "https://www.googleapis.com/auth/drive.appdata",
+            // "https://www.googleapis.com/auth/drive.install",
+            "https://www.googleapis.com/auth/drive.file",
+          ].join(" "),
+          params: {
+            prompt: "consent",
+            access_type: "offline",
+            response_type: "code",
+          },
+        },
+      },
+    }),
+  ],
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
