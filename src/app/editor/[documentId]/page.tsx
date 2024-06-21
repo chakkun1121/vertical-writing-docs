@@ -1,10 +1,10 @@
 import { auth } from "@/auth";
 import { googleDocsToMarkdown } from "docs-markdown";
+import { marked } from "marked";
 import { Metadata } from "next";
-import { MDXRemote } from "next-mdx-remote/rsc";
 import { redirect } from "next/navigation";
 
-export default async function Editor({
+export default async function EditorPage({
   params: { documentId },
 }: {
   params: { documentId: string };
@@ -22,6 +22,7 @@ export default async function Editor({
   const json = await result.json();
   console.log(json);
   const markdown = googleDocsToMarkdown(json);
+  const html = marked.parse(markdown.replace(/^---[\s\S]*?---/, ""));
   return (
     <>
       <header className="flex-none"></header>
@@ -31,9 +32,9 @@ export default async function Editor({
           style={{
             writingMode: "vertical-rl",
           }}
-        >
-          <MDXRemote source={markdown.replace(/^---[\s\S]*?---/, "")} />
-        </article>
+          contentEditable
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       </main>
     </>
   );
