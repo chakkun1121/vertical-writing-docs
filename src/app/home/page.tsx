@@ -24,20 +24,17 @@ export default async function Home() {
           <form
             action={async () => {
               "use server";
-              const result = await fetch(
-                "https://docs.googleapis.com/v1/documents",
-                {
-                  method: "POST",
-                  headers: {
-                    Accept: "application/json",
-                    Authorization: "Bearer " + session?.accessToken,
-                    "x-goog-api-key": process.env.GOOGLE_API_KEY || "",
-                  },
-                  body: JSON.stringify({
-                    title: "New Document",
-                  }),
-                }
-              );
+              const result = await fetch("https://docs.googleapis.com/v1/documents", {
+                method: "POST",
+                headers: {
+                  Accept: "application/json",
+                  Authorization: "Bearer " + session?.accessToken,
+                  "x-goog-api-key": process.env.GOOGLE_API_KEY || "",
+                },
+                body: JSON.stringify({
+                  title: "New Document",
+                }),
+              });
               console.log(result);
               const json = await result.json();
               return json;

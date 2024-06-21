@@ -11,14 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-
 export default async function UserMenu() {
   const session = await auth();
   if (session)
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <div className="flex items-center gap-2 h-full">
+          <div className="flex h-full items-center gap-2">
             <Avatar>
               <AvatarImage src={session?.user?.image || ""} />
               <AvatarFallback>{session?.user?.name}</AvatarFallback>
@@ -40,7 +39,7 @@ export default async function UserMenu() {
               <Button
                 type="submit"
                 variant="ghost"
-                className="w-full h-full text-left font-normal block p-0"
+                className="block h-full w-full p-0 text-left font-normal"
               >
                 Logout
               </Button>

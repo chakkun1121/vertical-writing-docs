@@ -2,10 +2,7 @@ import { auth } from "@/auth";
 
 const PUBLIC_PAGES = ["", "/", "/login"];
 export default auth(req => {
-  if (
-    !req.auth &&
-    !PUBLIC_PAGES.some(page => page === new URL(req.url).pathname)
-  ) {
+  if (!req.auth && !PUBLIC_PAGES.some(page => page === new URL(req.url).pathname)) {
     const newUrl = new URL("/login", req.nextUrl.origin);
     return Response.redirect(newUrl);
   }
