@@ -35,6 +35,7 @@ export default function Page() {
     const contents = await file.text();
     console.log(contents); // 内容を出力
     const id = createUUID();
+    sessionStorage.setItem(id, contents);
     await localforage.setItem(id, handle);
     router.push(`/edit?id=${id}&location=local`);
   }
