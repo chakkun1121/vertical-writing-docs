@@ -1,18 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useState } from "react";
 import { toast } from "sonner";
 
 export default function FileDialog({
-  markdown,
+  open,
+  setOpen,
   setMarkdown,
   setHandle,
 }: {
-  markdown: string | null;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setMarkdown: React.Dispatch<React.SetStateAction<string | null>>;
   setHandle: React.Dispatch<React.SetStateAction<FileSystemFileHandle | undefined>>;
 }) {
-  const [open, setOpen] = useState(!markdown);
   async function openFile() {
     if (typeof window.showOpenFilePicker == "undefined") {
       toast("このブラウザは対応していません");

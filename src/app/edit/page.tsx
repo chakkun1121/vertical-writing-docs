@@ -1,8 +1,16 @@
 "use client";
 import Editor from "@/components/functional/editor";
-
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 import { writeFile } from "@/lib/fileSystem/writeFile";
 import { useFormGuard } from "@/lib/useFormGuard";
+import markdownToTxt from "markdown-to-text";
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import FileDialog from "./fileDialog";
@@ -11,6 +19,7 @@ export default function Page() {
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [handle, setHandle] = useState<FileSystemFileHandle | undefined>();
   const [saved, setSaved] = useState(false);
+  const [fileDialogOpen, setFileDialogOpen] = useState(!markdown);
   useFormGuard(!saved);
   useEffect(() => {
     (async () => {
@@ -54,7 +63,44 @@ export default function Page() {
 
   return (
     <>
-      <FileDialog markdown={markdown} setMarkdown={setMarkdown} setHandle={setHandle} />
+      <header className="flex flex-none select-none justify-between">
+        <Menubar className="border-0">
+          <MenubarMenu>
+            <MenubarTrigger>ファイル</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem onClick={() => setFileDialogOpen(true)}>
+                ファイルを開く <MenubarShortcut>Ctrl+O</MenubarShortcut>
+              </MenubarItem>
+              <MenubarItem onClick={save}>
+                保存 <MenubarShortcut>Ctrl+S</MenubarShortcut>
+              </MenubarItem>
+              <MenubarItem>印刷</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+          <MenubarMenu>
+            <MenubarTrigger>ツール</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem>
+                設定 <MenubarShortcut>Ctrl+,</MenubarShortcut>
+              </MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+        <div>
+          <p className="px-4">
+            <span className="text-bold px-1">
+              {markdownToTxt(markdown!).replace(/\n/g, "")?.length}
+            </span>
+            文字
+          </p>
+        </div>
+      </header>
+      <FileDialog
+        setMarkdown={setMarkdown}
+        setHandle={setHandle}
+        open={fileDialogOpen}
+        setOpen={setFileDialogOpen}
+      />
       <Editor markdown={markdown} setMarkdown={setMarkdown} handle={handle} />
     </>
   );

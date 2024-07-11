@@ -30,7 +30,7 @@ const menuItemsData = [
 
 export const PMMenuBar: React.FC<{ editorView: EditorView }> = ({ editorView }) => {
   return (
-    <div className="flex-none space-y-4">
+    <div className="flex-none select-none space-y-4">
       {menuItemsData.map(([toggle, buttonText], index) => (
         <Button
           className="block w-full"
