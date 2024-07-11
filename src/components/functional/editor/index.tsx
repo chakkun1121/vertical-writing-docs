@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { defaultMarkdownParser, defaultMarkdownSerializer } from "prosemirror-markdown";
 
+import { cn } from "@/lib/utils";
 import { baseKeymap } from "prosemirror-commands";
 import { history, redo, undo } from "prosemirror-history";
 import { keymap } from "prosemirror-keymap";
@@ -11,8 +12,6 @@ import { PMMenuBar } from "./PMMenuBar";
 
 baseKeymap["Mod-z"] = undo;
 baseKeymap["Mod-y"] = redo;
-
-console.log("keymaps", Object.keys(baseKeymap));
 
 export default function Editor({
   markdown,
@@ -37,7 +36,6 @@ export default function Editor({
         const docChanged = transaction.docChanged;
         const state = editorView.state.apply(transaction);
         if (docChanged) {
-          console.log("doc changed");
           const markdown = defaultMarkdownSerializer.serialize(state.doc);
           setMarkdown(markdown);
         }
@@ -60,9 +58,14 @@ export default function Editor({
       <PMMenuBar editorView={editorView!} />
       <div
         ref={editorRef}
-        className="prose h-full w-full max-w-none flex-1 overflow-x-scroll"
+        className={cn(
+          "h-full w-full max-w-none flex-1 overflow-x-scroll p-4",
+          "*:w-full *:outline-0",
+          "prose prose-h1:mx-4 prose-h2:mx-2 prose-h2:mt-0 prose-h3:mx-3 prose-p:m-0"
+        )}
         style={{
           writingMode: "vertical-rl",
+          textOrientation: "upright",
         }}
       />
     </div>
