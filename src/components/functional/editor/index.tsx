@@ -17,9 +17,11 @@ console.log("keymaps", Object.keys(baseKeymap));
 export default function Editor({
   markdown,
   setMarkdown,
+  handle,
 }: {
-  markdown: string;
-  setMarkdown: React.Dispatch<React.SetStateAction<string>>;
+  markdown: string | null;
+  setMarkdown: React.Dispatch<React.SetStateAction<string | null>>;
+  handle?: FileSystemFileHandle;
 }) {
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +30,7 @@ export default function Editor({
   useEffect(() => {
     const editorView = new EditorView(editorRef.current!, {
       state: EditorState.create({
-        doc: defaultMarkdownParser.parse(markdown),
+        doc: defaultMarkdownParser.parse(markdown || ""),
         plugins: [keymap(baseKeymap), history()],
       }),
       dispatchTransaction: (transaction: Transaction) => {
@@ -51,7 +53,7 @@ export default function Editor({
       editorView.destroy();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editorRef]);
+  }, [editorRef, handle]);
 
   return (
     <div className="flex flex-row-reverse">

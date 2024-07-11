@@ -1,57 +1,92 @@
 "use client";
 import Editor from "@/components/functional/editor";
-import localforage from "localforage";
-import { useState } from "react";
-const initialContent = `# 美しい日本語
-
-## 草枕
-
-山路を登りながら、こう考えた。
-
-智に働けば角が立つ。情に掉させば流される。意地を通せば窮屈だ。とかくに人の世は住みにくい。
-
-住みにくさが高じると、安いところへ引き越したくなる。どこへ越しても住みにくいと悟ったとき、詩が生れて、絵ができる。
-
-## 東京の坂道
-
--   乃木坂
--   けやき坂
--   日向坂
-
-## 徒然草
-
-### 折節の移り変るこそ、ものごとにあはれなれ。
-
-さて、冬枯のけしきこそ、秋にはをさをさ劣るまじけれ。汀の草に紅葉の散り止りて、霜いと白うおける朝、遣水より烟の立つこそをかしけれ。年の暮れ果てて、人ごとに急ぎあへるころぞ、またなくあはれなる。すさまじきものにして見る人もなき月の寒けく澄める、廿日余りの空こそ、心ぼそきものなれ。御仏名、荷前の使立つなどぞ、あはれにやんごとなき。公事ども繁く、春の急ぎにとり重ねて催し行はるるさまぞ、いみじきや。追儺より四方拝に続くこそ面白けれ。晦日の夜、いたう闇きに、松どもともして、夜半過ぐるまで、人の、門叩き、走りありきて、何事にかあらん、ことことしくのゝしりて、足を空に惑ふが、暁がたより、さすがに音なくなりぬるこそ、年の名残も心ぼそけれ。亡き人のくる夜とて魂祭るわざは、このごろ都にはなきを、東のかたには、なほする事にてありしこそ、あはれなりしか。
-
-かくて明けゆく空のけしき、昨日に変りたりとは見えねど、ひきかへめづらしき心地ぞする。大路のさま、松立てわたして、はなやかにうれしげなるこそ、またあはれなれ。
-
-`;
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Page({
   searchParams: { id, location },
 }: {
   searchParams: { id?: string; location?: string };
 }) {
-  const { content, handle } = fetchData(location, id).read();
-  console.log(content, handle);
-  const [markdown, setMarkdown] = useState<string>(content || initialContent);
-  return <Editor markdown={markdown} setMarkdown={setMarkdown} />;
-}
-function fetchData(location?: string, id?: string) {
-  return wrapPromise(
-    new Promise(async (resolve, reject) => {
-      try {
-        if (location == "local" && id) {
-          const handle = await localforage.getItem(id);
-          const content = sessionStorage.getItem(id);
-          resolve({ content, handle });
-        }
-        resolve({ content: null, handle: null });
-      } catch (e) {
-        reject(e);
+  // const { content, handle } = fetchData(location, id).read();
+  // console.log(content, handle);
+  const [markdown, setMarkdown] = useState<string | null>(null);
+  const [handle, setHandle] = useState<FileSystemFileHandle | undefined>();
+  useEffect(() => {
+    (async () => {
+      if (handle) {
+        console.log("save");
+        await writeFile(handle, markdown!);
       }
-    })
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markdown]);
+  return (
+    <>
+      <FileDialog markdown={markdown} setMarkdown={setMarkdown} setHandle={setHandle} />
+      <Editor markdown={markdown} setMarkdown={setMarkdown} handle={handle} />
+    </>
+  );
+}
+function FileDialog({
+  markdown,
+  setMarkdown,
+  setHandle,
+}: {
+  markdown: string | null;
+  setMarkdown: React.Dispatch<React.SetStateAction<string | null>>;
+  setHandle: React.Dispatch<React.SetStateAction<FileSystemFileHandle | undefined>>;
+}) {
+  const [open, setOpen] = useState(!markdown);
+  async function openFile() {
+    if (typeof window.showOpenFilePicker == "undefined") {
+      toast("このブラウザは対応していません");
+      return;
+    }
+    const [handle] = await window.showOpenFilePicker({
+      types: [
+        {
+          description: "Text Files",
+          accept: {
+            "text/plain": [".txt", ".text"],
+          },
+        },
+        {
+          description: "Markdown Files",
+          accept: {
+            "text/markdown": [".md", ".markdown", ".mdx"],
+          },
+        },
+      ],
+      excludeAcceptAllOption: true,
+      multiple: false,
+    });
+    console.log(handle);
+    await handle.createWritable();
+    const file = await handle.getFile();
+    const contents = await file.text();
+    console.log(contents); // 内容を出力
+    setMarkdown(contents);
+    setHandle(handle);
+    setOpen(false);
+  }
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      {/* <DialogTrigger>Open</DialogTrigger> */}
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>ファイルを開く</DialogTitle>
+        </DialogHeader>
+        <div className="space-x-4">
+          <Button onClick={openFile}>ローカルから開く</Button>
+          <Button disabled title="制作中です">
+            Google Driveから開く
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 const wrapPromise = (promise: Promise<any>) => {
@@ -81,3 +116,8 @@ const wrapPromise = (promise: Promise<any>) => {
 
   return { read };
 };
+async function writeFile(fileHandle: FileSystemFileHandle, contents: string) {
+  const writable = await fileHandle.createWritable();
+  await writable.write(contents);
+  await writable.close();
+}
