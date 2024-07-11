@@ -1,12 +1,8 @@
-import { auth } from "@/auth";
-import { SignIn } from "@/components/functional/sign-in";
-
-export default async function Home() {
-  const session = await auth();
-  console.log(session);
+export default function Home() {
   return (
-    <main className="min-h-screen">
-      <SignIn />
-    </main>
+    <>
+      {/* <Header /> */}
+      <main></main>
+    </>
   );
 }
