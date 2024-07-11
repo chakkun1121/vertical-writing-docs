@@ -3,5 +3,5 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
-  "cSpell.words": ["Draftjs"]
+  "cSpell.words": ["Draftjs", "keymap", "keymaps", "nytimes", "prosemirror"]
 }
