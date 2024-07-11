@@ -7,11 +7,7 @@ import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import FileDialog from "./fileDialog";
 
-export default function Page({
-  searchParams: { id, location },
-}: {
-  searchParams: { id?: string; location?: string };
-}) {
+export default function Page() {
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [handle, setHandle] = useState<FileSystemFileHandle | undefined>();
   const [saved, setSaved] = useState(false);
