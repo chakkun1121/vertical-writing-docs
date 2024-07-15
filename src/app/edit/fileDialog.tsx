@@ -48,7 +48,7 @@ export default function FileDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {/* <DialogTrigger>Open</DialogTrigger> */}
-      <DialogContent>
+      <DialogContent className="print:hidden">
         <DialogHeader>
           <DialogTitle>ファイルを開く</DialogTitle>
         </DialogHeader>

@@ -63,7 +63,7 @@ export default function Page() {
 
   return (
     <>
-      <header className="flex flex-none select-none justify-between">
+      <header className="flex flex-none select-none justify-between print:hidden">
         <Menubar className="border-0">
           <MenubarMenu>
             <MenubarTrigger>ファイル</MenubarTrigger>

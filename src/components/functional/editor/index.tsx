@@ -54,14 +54,15 @@ export default function Editor({
   }, [editorRef, handle]);
 
   return (
-    <div className="flex flex-1 flex-row-reverse">
+    <div className="flex flex-1 flex-row-reverse print:block">
       <PMMenuBar editorView={editorView!} />
       <div
         ref={editorRef}
         className={cn(
           "w-full max-w-none flex-1 overflow-x-scroll p-4",
           "*:w-full *:outline-0",
-          "prose prose-h1:mx-4 prose-h2:mx-2 prose-h2:mt-0 prose-h3:mx-3 prose-p:m-0"
+          "prose prose-h1:mx-4 prose-h2:mx-2 prose-h2:mt-0 prose-h3:mx-3 prose-p:m-0",
+          "print;w-max print:inline-block print:h-max print:!overflow-x-visible print:p-0"
         )}
         style={{
           writingMode: "vertical-rl",
